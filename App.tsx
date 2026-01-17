@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { DevotionalEntry, UserPreferences } from './types';
+import React, { useState, useEffect } from 'react';
+import { HashRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom';
+import { DevotionalEntry, UserPreferences, ThemeMode } from './types';
 import { storage } from './services/storageService';
 import { ADMIN_SECRET_KEY } from './constants';
 import Layout from './components/Layout';
@@ -28,11 +28,15 @@ const App: React.FC = () => {
       
       if (lastNotified !== today) {
         const latest = devotionals[0];
-        new Notification("Daily Spirit Meal", {
-          body: `Today's Word: ${latest.title}\n"${latest.scripture.split('-')[0].trim()}"`,
-          icon: 'https://cdn-icons-png.flaticon.com/512/3389/3389152.png' // Religious/Book icon placeholder
-        });
-        localStorage.setItem('last_notified_date', today);
+        try {
+          new Notification("Daily Spirit Meal", {
+            body: `Today's Word: ${latest.title}\n"${latest.scripture.split('-')[0].trim()}"`,
+            icon: 'https://cdn-icons-png.flaticon.com/512/3389/3389152.png'
+          });
+          localStorage.setItem('last_notified_date', today);
+        } catch (e) {
+          console.error("Notification failed", e);
+        }
       }
     }
   }, [prefs.notificationsEnabled, notificationStatus, devotionals]);
@@ -244,15 +248,10 @@ const App: React.FC = () => {
 
 const DevotionalDetail: React.FC<{ 
   devotionals: DevotionalEntry[], 
-  theme: any, 
-  fontSize: any 
+  theme: ThemeMode, 
+  fontSize: 'sm' | 'base' | 'lg' | 'xl'
 }> = ({ devotionals, theme, fontSize }) => {
-  const { id } = React.useMemo(() => {
-    const hash = window.location.hash;
-    const parts = hash.split('/');
-    return { id: parts[parts.length - 1] };
-  }, [window.location.hash]);
-
+  const { id } = useParams<{ id: string }>();
   const entry = devotionals.find(d => d.id === id);
   
   if (!entry) return <div className="p-8 text-center">Devotional not found</div>;

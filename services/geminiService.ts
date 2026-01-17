@@ -1,10 +1,26 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize lazily to prevent crashing the whole app if the API key is missing at runtime
+let aiInstance: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!aiInstance) {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      console.warn("Gemini API Key is missing. Some features may not work.");
+      // We still return an instance, but it will error only when called
+      aiInstance = new GoogleGenAI({ apiKey: "MISSING_KEY" });
+    } else {
+      aiInstance = new GoogleGenAI({ apiKey });
+    }
+  }
+  return aiInstance;
+};
 
 export const extractDevotionalStructure = async (text: string) => {
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `You are a content extractor. Your goal is to take a raw devotional text and identify its components. 
@@ -38,6 +54,7 @@ export const extractDevotionalStructure = async (text: string) => {
 
 export const getDailyReflections = async (devotional: string) => {
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `Based on this devotional, provide 3 deep reflection questions to help the reader grow spiritually today: "${devotional}"`,

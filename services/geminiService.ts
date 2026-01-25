@@ -1,21 +1,10 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize lazily to prevent crashing the whole app if the API key is missing at runtime
-let aiInstance: GoogleGenAI | null = null;
-
 const getAI = () => {
-  if (!aiInstance) {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      console.warn("Gemini API Key is missing. Some features may not work.");
-      // We still return an instance, but it will error only when called
-      aiInstance = new GoogleGenAI({ apiKey: "MISSING_KEY" });
-    } else {
-      aiInstance = new GoogleGenAI({ apiKey });
-    }
-  }
-  return aiInstance;
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API_KEY_MISSING");
+  return new GoogleGenAI({ apiKey });
 };
 
 export const extractDevotionalStructure = async (text: string) => {
@@ -23,20 +12,25 @@ export const extractDevotionalStructure = async (text: string) => {
     const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `You are a content extractor. Your goal is to take a raw devotional text and identify its components. 
-      CRITICAL RULE: You MUST NOT rewrite, summarize, or refurbish the 'content' field. It must be a verbatim copy of the main body of the text provided.
-      
-      Input text: "${text}"`,
+      contents: [{
+        parts: [{
+          text: `Extract this Christian devotional into JSON.
+          Verbatim content in 'content'. 
+          If no prayer/meditation exists, generate brief ones.
+          
+          Text: "${text}"`
+        }]
+      }],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            title: { type: Type.STRING, description: "The title of the devotional" },
-            scripture: { type: Type.STRING, description: "The specific Bible verse or reference mentioned" },
-            content: { type: Type.STRING, description: "The original, untouched main body text" },
-            prayer: { type: Type.STRING, description: "A concluding prayer if present, or a short one based on the text if not" },
-            meditation: { type: Type.STRING, description: "A short one-sentence key takeaway" },
+            title: { type: Type.STRING },
+            scripture: { type: Type.STRING },
+            content: { type: Type.STRING },
+            prayer: { type: Type.STRING },
+            meditation: { type: Type.STRING },
             tags: { type: Type.ARRAY, items: { type: Type.STRING } }
           },
           required: ["title", "scripture", "content", "prayer", "meditation", "tags"]
@@ -44,10 +38,10 @@ export const extractDevotionalStructure = async (text: string) => {
       }
     });
 
-    const result = JSON.parse(response.text.trim());
-    return result;
+    const output = response.text?.trim();
+    return output ? JSON.parse(output) : null;
   } catch (error) {
-    console.error("Gemini Extraction Error:", error);
+    console.error("Extraction Error:", error);
     return null;
   }
 };
@@ -57,18 +51,36 @@ export const getDailyReflections = async (devotional: string) => {
     const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Based on this devotional, provide 3 deep reflection questions to help the reader grow spiritually today: "${devotional}"`,
+      contents: [{
+        parts: [{
+          text: `Generate 3 reflection questions for this devotional: "${devotional}"`
+        }]
+      }],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
-          type: Type.ARRAY,
-          items: { type: Type.STRING }
+          type: Type.OBJECT,
+          properties: {
+            questions: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ["questions"]
         }
       }
     });
-    return JSON.parse(response.text.trim());
+    
+    const output = response.text?.trim();
+    if (!output) throw new Error("Empty response");
+    const parsed = JSON.parse(output);
+    return parsed.questions || [];
   } catch (error) {
-    console.error("Gemini Reflections Error:", error);
-    return ["What stood out to you today?", "How can you apply this to your life?", "Who can you share this with?"];
+    console.error("Reflections RPC Error - Using Fallback:", error);
+    return [
+      "How does this message challenge your current walk with God?",
+      "In what practical way can you apply this truth to your life today?",
+      "Is there someone in your life who needs to hear this encouragement today?"
+    ];
   }
 };

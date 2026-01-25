@@ -24,11 +24,21 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const handleStorage = () => {
+    const handleSync = () => {
       setBookmarks(storage.getBookmarks());
+      setPrefs(storage.getPreferences());
+      setIsAdmin(storage.getAdminMode());
     };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+
+    // Standard cross-tab sync
+    window.addEventListener('storage', handleSync);
+    // Same-window custom sync
+    window.addEventListener(storage.SYNC_EVENT, handleSync);
+
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener(storage.SYNC_EVENT, handleSync);
+    };
   }, []);
 
   const updatePrefs = (newPrefs: Partial<UserPreferences>) => {
@@ -164,11 +174,35 @@ const App: React.FC = () => {
               <h2 className="text-2xl font-bold serif-font">Settings</h2>
               
               <section className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Reading Experience</h3>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Appearance</h3>
                 <div className="grid grid-cols-3 gap-3">
                   {(['light', 'sepia', 'dark'] as const).map(mode => (
-                    <button key={mode} onClick={() => updatePrefs({ theme: mode })} className={`py-3 rounded-xl border-2 transition-all capitalize text-sm font-medium ${prefs.theme === mode ? 'border-amber-600 bg-amber-50 text-amber-900' : 'border-stone-200'}`}>
+                    <button 
+                      key={mode} 
+                      onClick={() => updatePrefs({ theme: mode })} 
+                      className={`py-3 rounded-xl border-2 transition-all capitalize text-sm font-medium ${prefs.theme === mode ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-sm' : 'border-stone-200'}`}
+                    >
                       {mode}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Typography</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {[
+                    { id: 'sm', label: 'Small' },
+                    { id: 'base', label: 'Standard' },
+                    { id: 'lg', label: 'Large' },
+                    { id: 'xl', label: 'Extra Large' }
+                  ].map(size => (
+                    <button 
+                      key={size.id} 
+                      onClick={() => updatePrefs({ fontSize: size.id as any })} 
+                      className={`py-3 rounded-xl border-2 transition-all text-sm font-medium ${prefs.fontSize === size.id ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-sm' : 'border-stone-200'}`}
+                    >
+                      {size.label}
                     </button>
                   ))}
                 </div>

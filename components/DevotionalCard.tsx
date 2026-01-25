@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DevotionalEntry, ThemeMode } from '../types';
 import { getDailyReflections } from '../services/geminiService';
 import { storage } from '../services/storageService';
@@ -16,10 +16,18 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
   const [loadingReflections, setLoadingReflections] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showCopyFeedback, setShowCopyFeedback] = useState(false);
+  const [userNote, setUserNote] = useState('');
+  const [isSavingNote, setIsSavingNote] = useState(false);
+  const noteTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const bookmarks = storage.getBookmarks();
-    setIsBookmarked(bookmarks.includes(entry.id));
+    const syncState = () => {
+      const bookmarks = storage.getBookmarks();
+      setIsBookmarked(bookmarks.includes(entry.id));
+      setUserNote(storage.getNote(entry.id));
+    };
+
+    syncState();
 
     const fetchReflections = async () => {
       setLoadingReflections(true);
@@ -28,11 +36,35 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
       setLoadingReflections(false);
     };
     fetchReflections();
+
+    window.addEventListener(storage.SYNC_EVENT, syncState);
+    window.addEventListener('storage', syncState);
+
+    return () => {
+      window.removeEventListener(storage.SYNC_EVENT, syncState);
+      window.removeEventListener('storage', syncState);
+    };
   }, [entry.id, entry.content]);
 
-  const toggleBookmark = () => {
+  const toggleBookmark = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const newState = storage.toggleBookmark(entry.id);
     setIsBookmarked(newState);
+  };
+
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newNote = e.target.value;
+    setUserNote(newNote);
+    
+    // Auto-save logic with debounce
+    if (noteTimeoutRef.current) window.clearTimeout(noteTimeoutRef.current);
+    setIsSavingNote(true);
+    
+    noteTimeoutRef.current = window.setTimeout(() => {
+      storage.saveNote(entry.id, newNote);
+      setIsSavingNote(false);
+    }, 1000);
   };
 
   const handleShare = async () => {
@@ -49,7 +81,6 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
         console.error('Error sharing:', err);
       }
     } else {
-      // Fallback: Copy to clipboard
       try {
         await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
         setShowCopyFeedback(true);
@@ -106,10 +137,10 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
           </button>
           <button 
             onClick={toggleBookmark}
-            className={`p-3 rounded-full transition-all duration-300 active:scale-90 ${
+            className={`p-3 rounded-full transition-all active:scale-95 transform-gpu ${
               isBookmarked 
                 ? 'bg-amber-100 text-amber-600 shadow-sm' 
-                : theme === 'dark' ? 'text-stone-400 hover:text-stone-200 bg-stone-800' : 'text-stone-400 hover:text-stone-600 bg-stone-100'
+                : theme === 'dark' ? 'text-stone-400 bg-stone-800' : 'text-stone-400 bg-stone-100'
             }`}
             title={isBookmarked ? "Remove from Sanctuary" : "Save to Sanctuary"}
           >
@@ -143,6 +174,34 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
           <h3 className="text-xs font-bold uppercase tracking-widest text-amber-700 mb-4">A Moment of Prayer</h3>
           <p className="text-lg italic serif-font text-stone-500">"{entry.prayer}"</p>
         </div>
+      )}
+
+      {/* User Notes Section - Appears only when bookmarked */}
+      {isBookmarked && (
+        <section className={`mb-12 p-8 rounded-3xl border-2 border-dashed ${
+          theme === 'dark' ? 'border-stone-800 bg-stone-900' : 'border-amber-100 bg-amber-50/30'
+        } animate-in slide-in-from-bottom-4 duration-500`}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="text-amber-700"><ICONS.Pencil /></div>
+              <h3 className={`text-lg font-semibold serif-font ${theme === 'dark' ? 'text-amber-200' : 'text-amber-900'}`}>My Sanctuary Notes</h3>
+            </div>
+            {isSavingNote && (
+              <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 animate-pulse">Saving...</span>
+            )}
+          </div>
+          <textarea
+            value={userNote}
+            onChange={handleNoteChange}
+            placeholder="Record your personal reflections, revelations, or prayers related to this meal..."
+            className={`w-full h-40 p-4 rounded-xl resize-none outline-none transition-all ${
+              theme === 'dark' 
+                ? 'bg-stone-800 border-stone-700 text-stone-300 focus:border-amber-900/50' 
+                : 'bg-white border-amber-200 text-stone-700 focus:border-amber-400 focus:ring-4 focus:ring-amber-500/5'
+            } border text-sm leading-relaxed serif-font`}
+          />
+          <p className="text-[10px] mt-2 text-stone-400 italic">Notes are saved automatically and kept on this device.</p>
+        </section>
       )}
 
       <section className={`p-8 rounded-3xl ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-stone-100'}`}>

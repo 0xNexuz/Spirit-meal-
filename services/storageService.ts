@@ -7,16 +7,26 @@ const STORAGE_KEYS = {
   SUNDAY_SCHOOL: 'spirit_meal_sunday_school',
   PREFERENCES: 'spirit_meal_prefs',
   ADMIN_MODE: 'spirit_meal_admin',
-  BOOKMARKS: 'spirit_meal_bookmarks'
+  BOOKMARKS: 'spirit_meal_bookmarks',
+  NOTES: 'spirit_meal_notes'
+};
+
+// Custom event for same-window sync
+const SYNC_EVENT = 'spirit_meal_sync';
+
+const notifySync = () => {
+  window.dispatchEvent(new CustomEvent(SYNC_EVENT));
 };
 
 export const storage = {
+  SYNC_EVENT,
   getDevotionals: (): DevotionalEntry[] => {
     const data = localStorage.getItem(STORAGE_KEYS.DEVOTIONALS);
     return data ? JSON.parse(data) : INITIAL_DEVOTIONALS;
   },
   saveDevotionals: (devotionals: DevotionalEntry[]) => {
     localStorage.setItem(STORAGE_KEYS.DEVOTIONALS, JSON.stringify(devotionals));
+    notifySync();
   },
   getSundaySchool: (): SundaySchoolLesson[] => {
     const data = localStorage.getItem(STORAGE_KEYS.SUNDAY_SCHOOL);
@@ -24,6 +34,7 @@ export const storage = {
   },
   saveSundaySchool: (lessons: SundaySchoolLesson[]) => {
     localStorage.setItem(STORAGE_KEYS.SUNDAY_SCHOOL, JSON.stringify(lessons));
+    notifySync();
   },
   getPreferences: (): UserPreferences => {
     const data = localStorage.getItem(STORAGE_KEYS.PREFERENCES);
@@ -36,12 +47,14 @@ export const storage = {
   },
   savePreferences: (prefs: UserPreferences) => {
     localStorage.setItem(STORAGE_KEYS.PREFERENCES, JSON.stringify(prefs));
+    notifySync();
   },
   getAdminMode: (): boolean => {
     return localStorage.getItem(STORAGE_KEYS.ADMIN_MODE) === 'true';
   },
   setAdminMode: (active: boolean) => {
     localStorage.setItem(STORAGE_KEYS.ADMIN_MODE, active ? 'true' : 'false');
+    notifySync();
   },
   getBookmarks: (): string[] => {
     const data = localStorage.getItem(STORAGE_KEYS.BOOKMARKS);
@@ -49,6 +62,7 @@ export const storage = {
   },
   saveBookmarks: (ids: string[]) => {
     localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(ids));
+    notifySync();
   },
   toggleBookmark: (id: string): boolean => {
     const bookmarks = storage.getBookmarks();
@@ -65,5 +79,22 @@ export const storage = {
     
     storage.saveBookmarks(bookmarks);
     return isAdded;
+  },
+  getNotes: (): Record<string, string> => {
+    const data = localStorage.getItem(STORAGE_KEYS.NOTES);
+    return data ? JSON.parse(data) : {};
+  },
+  getNote: (id: string): string => {
+    return storage.getNotes()[id] || '';
+  },
+  saveNote: (id: string, note: string) => {
+    const notes = storage.getNotes();
+    if (!note.trim()) {
+      delete notes[id];
+    } else {
+      notes[id] = note;
+    }
+    localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(notes));
+    notifySync();
   }
 };

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useParams, useLocation } from 'react-router-dom';
 import { DevotionalEntry, SundaySchoolLesson, UserPreferences, ThemeMode } from './types.ts';
 import { storage } from './services/storageService.ts';
 import { ADMIN_SECRET_KEY, ICONS } from './constants.tsx';
@@ -66,14 +66,14 @@ const App: React.FC = () => {
 
   const handleNotificationToggle = async () => {
     if (typeof Notification === 'undefined') {
-      alert("This device doesn't support notifications in this browser.");
+      alert("Notifications not supported in this browser.");
       return;
     }
 
     if (Notification.permission !== 'granted') {
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
-        alert("Permission denied. Go to your phone settings to allow alerts for this app.");
+        alert("Please enable alerts in your device settings.");
         return;
       }
     }
@@ -95,7 +95,7 @@ const App: React.FC = () => {
           <Route path="/lesson/:id" element={<SundaySchoolDetail lessons={sundayLessons} theme={prefs.theme} fontSize={prefs.fontSize} />} />
           <Route path="/devotional/:id" element={<DevotionalDetail devotionals={devotionals} theme={prefs.theme} fontSize={prefs.fontSize} />} />
           <Route path="/bookmarks" element={<BookmarksView devotionals={devotionals} bookmarks={bookmarks} />} />
-          <Route path="/admin" element={isAdmin ? <AdminPanel onEntryAdded={refreshData} /> : <p className="p-10 text-center opacity-40">Restricted Area</p>} />
+          <Route path="/admin" element={<AdminRoute isAdmin={isAdmin} refreshData={refreshData} />} />
           <Route path="/settings" element={
             <div className="pt-6 space-y-8 pb-20">
               <h2 className="text-2xl font-bold serif-font">Settings</h2>
@@ -184,9 +184,18 @@ const App: React.FC = () => {
             </div>
           } />
         </Routes>
-      </nav>
+      </Layout>
     </Router>
   );
+};
+
+// Component to handle route state for editing
+const AdminRoute = ({ isAdmin, refreshData }: { isAdmin: boolean, refreshData: () => void }) => {
+  const location = useLocation();
+  const editId = location.state?.editId;
+  
+  if (!isAdmin) return <p className="p-10 text-center opacity-40">Restricted Area</p>;
+  return <AdminPanel onEntryAdded={refreshData} editId={editId} />;
 };
 
 // Sub-components to keep code clean

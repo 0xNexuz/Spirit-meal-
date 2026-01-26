@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { DevotionalEntry, ThemeMode } from '../types.ts';
 import { getDailyReflections } from '../services/geminiService.ts';
 import { storage } from '../services/storageService.ts';
@@ -18,6 +19,7 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
   const [showCopyFeedback, setShowCopyFeedback] = useState(false);
   const [userNote, setUserNote] = useState('');
   const [isSavingNote, setIsSavingNote] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(storage.getAdminMode());
   const noteTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -25,6 +27,7 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
       const bookmarks = storage.getBookmarks();
       setIsBookmarked(bookmarks.includes(entry.id));
       setUserNote(storage.getNote(entry.id));
+      setIsAdmin(storage.getAdminMode());
     };
 
     syncState();
@@ -100,6 +103,17 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
 
   return (
     <div className="py-8 animate-in fade-in duration-700 relative">
+      {isAdmin && (
+        <Link 
+          to="/admin" 
+          state={{ editId: entry.id }}
+          className="fixed bottom-24 right-6 z-50 p-4 bg-amber-700 text-white rounded-2xl shadow-2xl flex items-center gap-2 font-bold animate-in slide-in-from-right-4"
+        >
+          <ICONS.Pencil />
+          <span className="text-xs uppercase tracking-widest">Edit Meal</span>
+        </Link>
+      )}
+
       {entry.imageUrl && (
         <div className="mb-8 rounded-3xl overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100 aspect-video group">
           <img 

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useParams, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useParams, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { DevotionalEntry, SundaySchoolLesson, UserPreferences, ThemeMode } from './types.ts';
 import { storage } from './services/storageService.ts';
 import { ADMIN_SECRET_KEY, ICONS } from './constants.tsx';
@@ -54,7 +54,7 @@ const App: React.FC = () => {
           });
         }
       }
-    }, 30000); // Check every 30s
+    }, 30000);
     return () => clearInterval(intervalId);
   }, [prefs.notificationsEnabled, prefs.notificationTime]);
 
@@ -62,22 +62,6 @@ const App: React.FC = () => {
     const updated = { ...prefs, ...newPrefs };
     setPrefs(updated);
     storage.savePreferences(updated);
-  };
-
-  const handleNotificationToggle = async () => {
-    if (typeof Notification === 'undefined') {
-      alert("Notifications not supported in this browser.");
-      return;
-    }
-
-    if (Notification.permission !== 'granted') {
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        alert("Please enable alerts in your device settings.");
-        return;
-      }
-    }
-    updatePrefs({ notificationsEnabled: !prefs.notificationsEnabled });
   };
 
   const refreshData = () => {
@@ -95,110 +79,131 @@ const App: React.FC = () => {
           <Route path="/lesson/:id" element={<SundaySchoolDetail lessons={sundayLessons} theme={prefs.theme} fontSize={prefs.fontSize} />} />
           <Route path="/devotional/:id" element={<DevotionalDetail devotionals={devotionals} theme={prefs.theme} fontSize={prefs.fontSize} />} />
           <Route path="/bookmarks" element={<BookmarksView devotionals={devotionals} bookmarks={bookmarks} />} />
-          <Route path="/admin" element={<AdminRoute isAdmin={isAdmin} refreshData={refreshData} />} />
-          <Route path="/settings" element={
-            <div className="pt-6 space-y-8 pb-20">
-              <h2 className="text-2xl font-bold serif-font">Settings</h2>
-              
-              <section className="space-y-4">
-                <div className="flex items-center gap-2">
-                   <ICONS.Settings />
-                   <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Daily Reminders</h3>
-                </div>
-                <div className="p-6 rounded-3xl bg-white border border-stone-100 shadow-sm space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-bold">Enable Alerts</p>
-                      <p className="text-xs text-stone-500">Nudge me for my morning meal</p>
-                    </div>
-                    <button onClick={handleNotificationToggle} className={`w-14 h-7 rounded-full relative transition-all shadow-inner ${prefs.notificationsEnabled ? 'bg-amber-600' : 'bg-stone-200'}`}>
-                      <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${prefs.notificationsEnabled ? 'left-8' : 'left-1'}`} />
-                    </button>
-                  </div>
-
-                  {prefs.notificationsEnabled && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
-                      <div>
-                        <label className="text-[10px] font-bold text-amber-800 uppercase tracking-widest block mb-2">Preferred Time</label>
-                        <input 
-                          type="time" 
-                          value={prefs.notificationTime} 
-                          onChange={e => updatePrefs({ notificationTime: e.target.value })} 
-                          className="w-full p-4 rounded-2xl border bg-stone-50 font-bold text-center text-2xl shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-500/10" 
-                        />
-                      </div>
-                      
-                      {!isStandalone && (
-                        <div className="p-5 rounded-2xl bg-amber-50 border border-amber-100 text-[11px] leading-relaxed text-amber-900 shadow-sm">
-                          <p className="font-bold uppercase mb-2 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" /></svg>
-                            Fix Phone Notifications
-                          </p>
-                          Standard mobile browsers (Chrome/Safari) block alerts for security. To get notifications:
-                          <ol className="list-decimal ml-5 mt-3 space-y-2">
-                            <li>Tap the <strong>Share</strong> icon (bottom center on iPhone, top right on Android).</li>
-                            <li>Select <strong>'Add to Home Screen'</strong>.</li>
-                            <li>Open the <strong>Spirit Meal</strong> icon that appears on your phone's home screen.</li>
-                            <li>Re-enable this switch inside the new app!</li>
-                          </ol>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              <section className="space-y-4">
-                <div className="flex items-center gap-2">
-                   <div className="w-6 h-6 rounded bg-stone-200" />
-                   <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Appearance</h3>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['light', 'sepia', 'dark'] as const).map(m => (
-                    <button 
-                      key={m} 
-                      onClick={() => updatePrefs({ theme: m })} 
-                      className={`py-4 rounded-2xl border-2 capitalize text-sm font-bold transition-all ${prefs.theme === m ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-md' : 'border-stone-100 bg-white text-stone-500'}`}
-                    >
-                      {m}
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <button onClick={() => {
-                if (isAdmin) { 
-                  if(confirm("Logout from Admin Studio?")) {
-                    storage.setAdminMode(false); 
-                    setIsAdmin(false); 
-                  }
-                }
-                else { 
-                  const k = prompt("Master Access Key:"); 
-                  if (k === ADMIN_SECRET_KEY) { storage.setAdminMode(true); setIsAdmin(true); } 
-                  else if(k !== null) alert("Access Denied.");
-                }
-              }} className="w-full py-5 border-2 border-dashed border-stone-200 text-stone-400 text-xs font-bold uppercase tracking-[0.2em] rounded-2xl hover:border-amber-300 hover:text-amber-800 transition-all">
-                {isAdmin ? 'Logout Admin' : 'Admin Access'}
-              </button>
-            </div>
-          } />
+          <Route path="/login" element={<LoginView onLogin={(success) => setIsAdmin(success)} />} />
+          <Route path="/admin" element={isAdmin ? <AdminRoute isAdmin={isAdmin} refreshData={refreshData} /> : <Navigate to="/login" />} />
+          <Route path="/settings" element={<SettingsView prefs={prefs} updatePrefs={updatePrefs} isAdmin={isAdmin} setIsAdmin={setIsAdmin} isStandalone={isStandalone} />} />
         </Routes>
       </Layout>
     </Router>
   );
 };
 
-// Component to handle route state for editing
-const AdminRoute = ({ isAdmin, refreshData }: { isAdmin: boolean, refreshData: () => void }) => {
+// --- SUB-COMPONENTS ---
+
+const LoginView = ({ onLogin }: { onLogin: (s: boolean) => void }) => {
+  const [key, setKey] = useState('');
+  const [error, setError] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (key === ADMIN_SECRET_KEY) {
+      storage.setAdminMode(true);
+      onLogin(true);
+      navigate('/admin');
+    } else {
+      setError(true);
+      setKey('');
+    }
+  };
+
+  return (
+    <div className="pt-20 px-6 max-w-sm mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-bold serif-font">Admin Studio</h2>
+        <p className="text-xs text-stone-400 font-bold uppercase tracking-widest">Entry Restricted</p>
+      </div>
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div className="space-y-1">
+          <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-2">Master Access Key</label>
+          <input 
+            type="password" 
+            autoFocus
+            value={key}
+            onChange={(e) => {setKey(e.target.value); setError(false);}}
+            placeholder="••••••••••••"
+            className={`w-full p-5 rounded-3xl border-2 bg-stone-50 outline-none transition-all text-center tracking-[0.5em] font-black ${error ? 'border-red-200 focus:border-red-400' : 'border-stone-100 focus:border-amber-700/30'}`}
+          />
+        </div>
+        {error && <p className="text-center text-red-500 text-[10px] font-bold uppercase animate-bounce">Access Denied</p>}
+        <button type="submit" className="w-full py-5 bg-amber-800 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-amber-900/20 active:scale-95 transition-all">
+          Unlock Studio
+        </button>
+      </form>
+      <p className="text-center text-[10px] text-stone-300 italic">Access is reserved for authorized ministry administrators only.</p>
+    </div>
+  );
+};
+
+const SettingsView = ({ prefs, updatePrefs, isAdmin, setIsAdmin, isStandalone }: any) => {
+  const navigate = useNavigate();
+  return (
+    <div className="pt-6 space-y-8 pb-20">
+      <h2 className="text-2xl font-bold serif-font">Settings</h2>
+      
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+           <ICONS.Settings />
+           <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Daily Reminders</h3>
+        </div>
+        <div className="p-6 rounded-3xl bg-white border border-stone-100 shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-bold">Enable Alerts</p>
+              <p className="text-xs text-stone-500">Nudge me for my morning meal</p>
+            </div>
+            <button onClick={() => updatePrefs({ notificationsEnabled: !prefs.notificationsEnabled })} className={`w-14 h-7 rounded-full relative transition-all shadow-inner ${prefs.notificationsEnabled ? 'bg-amber-600' : 'bg-stone-200'}`}>
+              <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${prefs.notificationsEnabled ? 'left-8' : 'left-1'}`} />
+            </button>
+          </div>
+
+          {prefs.notificationsEnabled && (
+            <div className="space-y-6">
+              <input type="time" value={prefs.notificationTime} onChange={e => updatePrefs({ notificationTime: e.target.value })} className="w-full p-4 rounded-2xl border bg-stone-50 font-bold text-center text-2xl" />
+              {!isStandalone && <p className="p-4 bg-amber-50 rounded-2xl text-[10px] text-amber-900 italic">Note: For persistent alerts on mobile, use 'Add to Home Screen'.</p>}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+           <div className="w-6 h-6 rounded-full bg-stone-200" />
+           <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Theme</h3>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {(['light', 'sepia', 'dark'] as const).map(m => (
+            <button key={m} onClick={() => updatePrefs({ theme: m })} className={`py-4 rounded-2xl border-2 capitalize text-sm font-bold ${prefs.theme === m ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-md' : 'border-stone-100 bg-white text-stone-500'}`}>
+              {m}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {isAdmin ? (
+        <div className="space-y-3 pt-6">
+          <button onClick={() => navigate('/admin')} className="w-full py-5 bg-stone-800 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs">
+            Open Admin Studio
+          </button>
+          <button onClick={() => { if(confirm("Logout from Admin?")) { storage.setAdminMode(false); setIsAdmin(false); navigate('/'); } }} className="w-full py-5 border-2 border-stone-200 text-stone-400 font-bold uppercase tracking-widest text-[10px] rounded-[1.5rem]">
+            Logout Administrator
+          </button>
+        </div>
+      ) : (
+        <button onClick={() => navigate('/login')} className="w-full py-5 border-2 border-dashed border-stone-200 text-stone-400 text-xs font-bold uppercase tracking-[0.2em] rounded-2xl hover:border-amber-300 hover:text-amber-800 transition-all">
+          Admin Portal Access
+        </button>
+      )}
+    </div>
+  );
+};
+
+const AdminRoute = ({ refreshData }: { isAdmin: boolean, refreshData: () => void }) => {
   const location = useLocation();
   const editId = location.state?.editId;
-  
-  if (!isAdmin) return <p className="p-10 text-center opacity-40">Restricted Area</p>;
   return <AdminPanel onEntryAdded={refreshData} editId={editId} />;
 };
 
-// Sub-components to keep code clean
 const ArchiveView = ({ devotionals, theme }: any) => (
   <div className="pt-6 space-y-4">
     <h2 className="text-2xl font-bold serif-font mb-4">Library</h2>
@@ -254,29 +259,13 @@ const SundaySchoolDetail = ({ lessons, theme, fontSize }: any) => {
     <div className="py-8 animate-in fade-in slide-in-from-bottom-2">
       <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-2 block">{lesson.topic}</span>
       <h2 className="text-3xl md:text-4xl font-bold serif-font mb-6 leading-tight">{lesson.title}</h2>
-      
       <div className="p-6 rounded-2xl bg-indigo-50 border-l-4 border-indigo-600 mb-8">
         <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-800 mb-1">Memory Verse</p>
         <p className="serif-font italic text-lg text-indigo-900">"{lesson.memoryVerse}"</p>
       </div>
-
       <div className={`serif-font leading-relaxed ${sizeClass} ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'} mb-12`}>
         {lesson.content.split('\n').map((p: string, i: number) => <p key={i} className="mb-4">{p}</p>)}
       </div>
-
-      {lesson.discussionQuestions && lesson.discussionQuestions.length > 0 && (
-        <section className="p-8 rounded-3xl bg-stone-100/50 space-y-4">
-          <h3 className="font-bold uppercase tracking-widest text-xs text-stone-400">Discussion Points</h3>
-          <ul className="space-y-4">
-            {lesson.discussionQuestions.map((q: string, i: number) => (
-              <li key={i} className="flex gap-4 items-start">
-                <span className="w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i+1}</span>
-                <p className="text-sm">{q}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </div>
   );
 };

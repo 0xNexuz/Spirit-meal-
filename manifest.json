@@ -1,0 +1,25 @@
+
+{
+  "name": "Spirit Meal - Daily Devotional",
+  "short_name": "Spirit Meal",
+  "description": "Daily spiritual nourishment from The Living Christ Gospel Ministries.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#92400e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

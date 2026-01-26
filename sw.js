@@ -28,8 +28,8 @@ self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : { title: 'Spirit Meal', body: 'Time for your daily devotional.' };
   const options = {
     body: data.body,
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    icon: './logo.png',
+    badge: './logo.png',
     vibrate: [100, 50, 100],
     data: {
       url: self.location.origin

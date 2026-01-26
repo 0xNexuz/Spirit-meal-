@@ -10,7 +10,7 @@ interface LayoutProps {
   isAdmin: boolean;
 }
 
-// Custom SVG Logo Component to recreate the Ministry Seal
+// Recreating the official Ministry Seal as a high-fidelity SVG component
 const MinistryLogo: React.FC<{ size?: number }> = ({ size = 44 }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" className="drop-shadow-sm">
     <defs>
@@ -19,43 +19,52 @@ const MinistryLogo: React.FC<{ size?: number }> = ({ size = 44 }) => (
         <stop offset="50%" style={{ stopColor: '#b45309', stopOpacity: 1 }} />
         <stop offset="100%" style={{ stopColor: '#f59e0b', stopOpacity: 1 }} />
       </linearGradient>
+      <radialGradient id="innerBg" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" style={{ stopColor: '#4a3728', stopOpacity: 1 }} />
+        <stop offset="100%" style={{ stopColor: '#1a1410', stopOpacity: 1 }} />
+      </radialGradient>
     </defs>
     
-    {/* Outer Gold Ring */}
-    <circle cx="50" cy="50" r="48" fill="url(#goldGradient)" />
-    <circle cx="50" cy="50" r="45" fill="white" />
-    <circle cx="50" cy="50" r="38" fill="url(#goldGradient)" />
+    {/* Outer Gold Rings */}
+    <circle cx="50" cy="50" r="49" fill="url(#goldGradient)" />
+    <circle cx="50" cy="50" r="46" fill="white" />
+    <circle cx="50" cy="50" r="39" fill="url(#goldGradient)" />
     
+    {/* Text Tracks */}
+    <path id="topTextPath" d="M 12,50 A 38,38 0 1,1 88,50" fill="none" />
+    <path id="bottomTextPath" d="M 15,50 A 35,35 0 0,0 85,50" fill="none" />
+
     {/* Top Text Arc */}
-    <path id="topTextPath" d="M 15,50 A 35,35 0 1,1 85,50" fill="none" />
-    <text className="font-bold uppercase" style={{ fontSize: '5.5px', fill: '#000' }}>
+    <text className="font-bold uppercase" style={{ fontSize: '4.8px', fill: '#000', letterSpacing: '0.05em' }}>
       <textPath href="#topTextPath" startOffset="50%" textAnchor="middle">
-        THE LIVING CHRIST GOSPEL MINISTRIES
+        THE LIVING CHRIST GOSPEL MINISTRIES WORLDWIDE
       </textPath>
     </text>
 
     {/* Bottom Text Arc */}
-    <path id="bottomTextPath" d="M 15,50 A 35,35 0 0,0 85,50" fill="none" />
-    <text className="font-bold uppercase" style={{ fontSize: '6px', fill: '#000' }}>
+    <text className="font-bold uppercase" style={{ fontSize: '5.5px', fill: '#000' }}>
       <textPath href="#bottomTextPath" startOffset="50%" textAnchor="middle">
         ★ I AM ALIVE FOR EVER MORE ★
       </textPath>
     </text>
 
-    {/* Inner Shield / Dark Background */}
-    <circle cx="50" cy="50" r="34" fill="#2d2218" />
+    {/* Inner Shield Background */}
+    <circle cx="50" cy="50" r="35" fill="url(#innerBg)" />
     
-    {/* Central Elements (Symbols) */}
+    {/* Central Elements */}
     {/* Open Bible */}
-    <path d="M35 55 Q40 52 50 55 Q60 52 65 55 L65 65 Q60 62 50 65 Q40 62 35 65 Z" fill="#fff" />
-    <line x1="50" y1="55" x2="50" y2="65" stroke="#ccc" strokeWidth="0.5" />
+    <path d="M32 62 Q40 58 50 62 Q60 58 68 62 L68 72 Q60 68 50 72 Q40 68 32 72 Z" fill="#fff" />
+    <line x1="50" y1="62" x2="50" y2="72" stroke="#d6d3d1" strokeWidth="0.4" />
     
     {/* Golden Cross */}
-    <rect x="48" y="38" width="4" height="18" fill="url(#goldGradient)" rx="0.5" />
-    <rect x="42" y="44" width="16" height="4" fill="url(#goldGradient)" rx="0.5" />
+    <rect x="52" y="42" width="4" height="24" fill="url(#goldGradient)" rx="0.5" />
+    <rect x="45" y="50" width="18" height="4" fill="url(#goldGradient)" rx="0.5" />
     
     {/* Holy Spirit Dove */}
-    <path d="M62 38 Q65 35 70 38 Q72 42 68 45 Q65 48 62 44 L58 46 Q60 42 62 38Z" fill="#fff" />
+    <path d="M68 32 Q72 28 78 32 Q80 38 74 42 Q70 46 66 40 L60 42 Q64 36 68 32Z" fill="#fff" />
+    
+    {/* Light Ray effect from Cross/Dove */}
+    <path d="M50 45 L70 35" stroke="rgba(252, 211, 77, 0.3)" strokeWidth="8" strokeLinecap="round" style={{ filter: 'blur(4px)' }} />
   </svg>
 );
 

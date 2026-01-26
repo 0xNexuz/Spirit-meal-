@@ -14,7 +14,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     prayer: "The battle against family oneness and love is raging higher than has ever been. Pray for families waging internal wars with untold casualties on every side. Pray against infiltration from the enemy.",
     meditation: "Deuteronomy 28:15 - But it shall come to pass, if thou wilt not hearken unto the voice of the LORD thy God...",
     imageUrl: "https://images.unsplash.com/photo-1543191878-f6a394669865?q=80&w=1000&auto=format&fit=crop",
-    tags: ["Family", "Service", "Legacy"]
+    tags: ["Family", "Unity", "Service"]
   },
   {
     id: "1jamt0dt5",
@@ -25,7 +25,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     prayer: "Pray for grace to cut off from the Korah generations. “I will not be swept with them. My family will not be caught in their web of unrighteousness.",
     meditation: "God’s daily promise for today: “Let no man deceive you with vain words: for because of these things cometh the wrath of God upon the children of disobedience.” Ephesians 5:6.",
     imageUrl: "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?q=80&w=1000&auto=format&fit=crop",
-    tags: ["Warning", "Discernment", "Separation"]
+    tags: ["Warning", "Discernment"]
   },
   {
     id: "vzcl9yaqn",
@@ -36,7 +36,29 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     prayer: "Pray as led by the Holy Spirit of God.",
     meditation: "Isaiah 62:2 - And the Gentiles shall see thy righteousness, and all kings thy glory.",
     imageUrl: "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?q=80&w=1000&auto=format&fit=crop",
-    tags: ["Heaven", "Eternity", "Jesus"]
+    tags: ["Heaven", "Jesus"]
+  },
+  {
+    id: "6stfmjz3g",
+    date: "2026-01-17",
+    title: "THE LOVE FOR HEAVEN 6 [The reason for Heaven 2]",
+    scripture: "JOHN 14:3",
+    content: "THE LIVING CHRIST GOSPEL MINISTERIES INT'L. SPIRIT MEAL & DAILY DEVOTIONAL - 17 January 2026\n\nTHE LOVE FOR HEAVEN 6\n\n[The reason for Heaven 2]   \n\nText: John 14:3\n\nA faithful promise for the faithful and Overcomers (Revelation 3:21, 21:5)\nA reward for those who love Jesus Christ in truth (1 Corinthians 2:9)\nA family home for the bride to be with Jesus Christ forever …that where I am there ye may be also. John 14:3\n\nA Temple where kingdom of Priest dwells\nThe Headquarters of all Authorities, Power and Ruler for all creation.\nLet us read Scriptures\nRevelations 22 1-5\n\n“Then the angel showed me the river of the water of life, as clear as crystal, flowing from the throne of God and of the Lamb down the middle of the great street of the city. On each side of the river stood the tree of life, bearing twelve crops of fruit, yielding its fruit every month. And the leaves of the tree are for the healing of the nations. No longer will there be any curse. The throne of God and of the Lamb will be in the city, and his servants will serve him. \n\n4 They will see his face, and his name will be on their foreheads. 5 There will be no more night. They will not need the light of a lamp or the light of the sun, for the Lord God will give them light. And they will reign for ever and ever.”\n\nHallelujah\n\nThoughts for the day: Did you know destinations are ultimately going to be not just Heaven and hell but also a new earth?",
+    prayer: "May I be ready for your return Lord, all I want is you.",
+    meditation: "Revelation 2:17 - To him that overcometh will I give to eat of the hidden manna.",
+    imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop",
+    tags: ["Hope", "Promises"]
+  },
+  {
+    id: "1",
+    date: "2026-01-16",
+    title: "Finding Peace in the Silence",
+    scripture: "Psalm 46:10 - \"Be still, and know that I am God.\"",
+    content: "In the rush of our modern world, silence is often feared or avoided. Yet, it is in the quiet spaces of our day that we can truly hear the whisper of the Spirit. Today, take five minutes to sit in absolute silence. Don't ask for anything. Don't explain anything. Just be still and acknowledge the presence that is already with you.",
+    prayer: "Lord, help me to value the quiet moments today. May my heart find rest in Your presence.",
+    meditation: "Peace is not the absence of trouble, but the presence of God.",
+    imageUrl: "https://images.unsplash.com/photo-1499209974431-9dac3adaf477?q=80&w=1000&auto=format&fit=crop",
+    tags: ["Peace", "Silence", "Rest"]
   }
 ];
 
@@ -53,6 +75,20 @@ export const INITIAL_SUNDAY_SCHOOL: SundaySchoolLesson[] = [
       "How do we tell bread from seed? [Vision]"
     ],
     imageUrl: "https://images.unsplash.com/photo-1473970613941-82b1702811c1?q=80&w=1000&auto=format&fit=crop"
+  },
+  {
+    id: "ss-1",
+    date: "2026-01-25",
+    title: "The Foundations of Faith",
+    topic: "Basic Christian Doctrine",
+    memoryVerse: "Hebrews 11:1",
+    content: "Faith is the cornerstone of our walk with God. It is not merely an intellectual agreement with facts, but a deep-seated trust that leads to action. In this lesson, we explore how faith grows through hearing the Word and witnessing God's faithfulness in our lives.",
+    discussionQuestions: [
+      "How would you define faith in your own words?",
+      "Can you share a time when your faith was tested?",
+      "What are practical ways to strengthen faith daily?"
+    ],
+    imageUrl: "https://images.unsplash.com/photo-1438109491414-7198515b166b?q=80&w=1000&auto=format&fit=crop"
   }
 ];
 

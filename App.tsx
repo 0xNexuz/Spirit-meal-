@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useParams, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { DevotionalEntry, SundaySchoolLesson, UserPreferences, ThemeMode } from './types.ts';
 import { storage } from './services/storageService.ts';
@@ -58,6 +58,25 @@ const App: React.FC = () => {
     return () => clearInterval(intervalId);
   }, [prefs.notificationsEnabled, prefs.notificationTime]);
 
+  const todaysDevotional = useMemo(() => {
+    if (devotionals.length === 0) return null;
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    // 1. Try exact match for today
+    const exact = devotionals.find(d => d.date === todayStr);
+    if (exact) return exact;
+
+    // 2. Fallback: Most recent devotional that isn't in the future
+    const pastAndPresent = devotionals
+      .filter(d => d.date <= todayStr)
+      .sort((a, b) => b.date.localeCompare(a.date));
+    
+    if (pastAndPresent.length > 0) return pastAndPresent[0];
+
+    // 3. Last fallback: Just the first one in the list (most recent overall)
+    return devotionals[0];
+  }, [devotionals]);
+
   const updatePrefs = (newPrefs: Partial<UserPreferences>) => {
     const updated = { ...prefs, ...newPrefs };
     setPrefs(updated);
@@ -73,7 +92,7 @@ const App: React.FC = () => {
     <Router>
       <Layout theme={prefs.theme} isAdmin={isAdmin}>
         <Routes>
-          <Route path="/" element={devotionals[0] ? <DevotionalCard entry={devotionals[0]} theme={prefs.theme} fontSize={prefs.fontSize} /> : <p className="p-20 text-center opacity-40">Spirit Meal is preparing...</p>} />
+          <Route path="/" element={todaysDevotional ? <DevotionalCard entry={todaysDevotional} theme={prefs.theme} fontSize={prefs.fontSize} /> : <p className="p-20 text-center opacity-40">Spirit Meal is preparing...</p>} />
           <Route path="/archive" element={<ArchiveView devotionals={devotionals} theme={prefs.theme} />} />
           <Route path="/lessons" element={<LessonsView lessons={sundayLessons} />} />
           <Route path="/lesson/:id" element={<SundaySchoolDetail lessons={sundayLessons} theme={prefs.theme} fontSize={prefs.fontSize} />} />
@@ -168,6 +187,20 @@ const SettingsView = ({ prefs, updatePrefs, isAdmin, setIsAdmin, isStandalone }:
 
       <section className="space-y-4">
         <div className="flex items-center gap-2">
+           <div className="w-6 h-6 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-black">Aa</div>
+           <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Text Selection</h3>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {(['sm', 'base', 'lg', 'xl'] as const).map(sz => (
+            <button key={sz} onClick={() => updatePrefs({ fontSize: sz })} className={`py-4 rounded-2xl border-2 uppercase text-[10px] font-black tracking-widest ${prefs.fontSize === sz ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-md' : 'border-stone-100 bg-white text-stone-300'}`}>
+              {sz}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
            <div className="w-6 h-6 rounded-full bg-stone-200" />
            <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Theme</h3>
         </div>
@@ -214,29 +247,35 @@ const AdminRoute = ({ refreshData }: { isAdmin: boolean, refreshData: () => void
   return <AdminPanel onEntryAdded={refreshData} editId={editId} />;
 };
 
-const ArchiveView = ({ devotionals, theme }: any) => (
-  <div className="pt-6 space-y-4">
-    <h2 className="text-2xl font-bold serif-font mb-4">Library</h2>
-    {devotionals.length === 0 ? <p className="text-center py-10 opacity-40 italic">Library is empty</p> : devotionals.map((d: any) => (
-      <Link key={d.id} to={`/devotional/${d.id}`} className={`block p-4 rounded-2xl border transition-all hover:translate-x-1 ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-stone-100 shadow-sm'}`}>
-        <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">{d.date}</span>
-        <h3 className="font-bold text-lg serif-font">{d.title}</h3>
-      </Link>
-    ))}
-  </div>
-);
+const ArchiveView = ({ devotionals, theme }: any) => {
+  const sorted = [...devotionals].sort((a, b) => b.date.localeCompare(a.date));
+  return (
+    <div className="pt-6 space-y-4">
+      <h2 className="text-2xl font-bold serif-font mb-4">Library</h2>
+      {sorted.length === 0 ? <p className="text-center py-10 opacity-40 italic">Library is empty</p> : sorted.map((d: any) => (
+        <Link key={d.id} to={`/devotional/${d.id}`} className={`block p-4 rounded-2xl border transition-all hover:translate-x-1 ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-stone-100 shadow-sm'}`}>
+          <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">{d.date}</span>
+          <h3 className="font-bold text-lg serif-font">{d.title}</h3>
+        </Link>
+      ))}
+    </div>
+  );
+};
 
-const LessonsView = ({ lessons }: any) => (
-  <div className="pt-6 space-y-4">
-    <h2 className="text-2xl font-bold serif-font mb-4">Sunday School</h2>
-    {lessons.length === 0 ? <p className="text-center py-10 opacity-40 italic">No lessons found</p> : lessons.map((l: any) => (
-      <Link key={l.id} to={`/lesson/${l.id}`} className="block p-5 rounded-3xl bg-white border border-indigo-100 shadow-sm transition-all hover:translate-x-1">
-        <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest">{l.topic}</span>
-        <h3 className="font-bold text-lg serif-font text-indigo-950">{l.title}</h3>
-      </Link>
-    ))}
-  </div>
-);
+const LessonsView = ({ lessons }: any) => {
+  const sorted = [...lessons].sort((a, b) => b.date.localeCompare(a.date));
+  return (
+    <div className="pt-6 space-y-4">
+      <h2 className="text-2xl font-bold serif-font mb-4">Sunday School</h2>
+      {sorted.length === 0 ? <p className="text-center py-10 opacity-40 italic">No lessons found</p> : sorted.map((l: any) => (
+        <Link key={l.id} to={`/lesson/${l.id}`} className="block p-5 rounded-3xl bg-white border border-indigo-100 shadow-sm transition-all hover:translate-x-1">
+          <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest">{l.topic}</span>
+          <h3 className="font-bold text-lg serif-font text-indigo-950">{l.title}</h3>
+        </Link>
+      ))}
+    </div>
+  );
+};
 
 const BookmarksView = ({ devotionals, bookmarks }: any) => {
   const list = devotionals.filter((d: any) => bookmarks.includes(d.id));
@@ -281,6 +320,20 @@ const SundaySchoolDetail = ({ lessons, theme, fontSize }: any) => {
       <div className={`serif-font leading-relaxed ${sizeClass} ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'} mb-12`}>
         {lesson.content.split('\n').map((p: string, i: number) => <p key={i} className="mb-4">{p}</p>)}
       </div>
+      
+      {lesson.discussionQuestions && lesson.discussionQuestions.length > 0 && (
+        <section className={`p-8 rounded-3xl ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-stone-100'}`}>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-6">Study Questions</h3>
+          <ul className="space-y-6">
+            {lesson.discussionQuestions.map((q, i) => (
+              <li key={i} className="flex gap-4">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-200 text-indigo-800 flex items-center justify-center font-bold text-sm">{i + 1}</span>
+                <p className="text-sm leading-relaxed">{q}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 };

@@ -25,15 +25,24 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
       const dev = devotionals.find(d => d.id === editId);
       if (dev) {
         setActiveTab('devotionals');
-        // Convert tags array to string for editing
-        setEditingItem({ ...dev, tagsString: dev.tags?.join(', ') || '' });
+        setEditingItem({ 
+          ...dev, 
+          tagsString: dev.tags?.join(', ') || '',
+          prayer: dev.prayer || '',
+          meditation: dev.meditation || '',
+          scripture: dev.scripture || ''
+        });
         return;
       }
       const lesson = lessons.find(l => l.id === editId);
       if (lesson) {
         setActiveTab('lessons');
-        // Convert questions array to newline string for editing
-        setEditingItem({ ...lesson, questionsString: lesson.discussionQuestions?.join('\n') || '' });
+        setEditingItem({ 
+          ...lesson, 
+          questionsString: lesson.discussionQuestions?.join('\n') || '',
+          topic: lesson.topic || '',
+          memoryVerse: lesson.memoryVerse || ''
+        });
       }
     }
   }, [editId, devotionals, lessons]);
@@ -55,9 +64,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
 
   const handleEdit = (item: any) => {
     if (activeTab === 'devotionals') {
-      setEditingItem({ ...item, tagsString: item.tags?.join(', ') || '' });
+      setEditingItem({ 
+        ...item, 
+        tagsString: item.tags?.join(', ') || '',
+        prayer: item.prayer || '',
+        meditation: item.meditation || '',
+        scripture: item.scripture || ''
+      });
     } else {
-      setEditingItem({ ...item, questionsString: item.discussionQuestions?.join('\n') || '' });
+      setEditingItem({ 
+        ...item, 
+        questionsString: item.discussionQuestions?.join('\n') || '',
+        topic: item.topic || '',
+        memoryVerse: item.memoryVerse || ''
+      });
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -76,44 +96,54 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
   };
 
   const handleSave = () => {
-    if (!editingItem.title?.trim() || !editingItem.content?.trim()) {
-      alert("A Title and Content are required.");
-      return;
+    try {
+      if (!editingItem.title?.trim() || !editingItem.content?.trim()) {
+        alert("A Title and Content are required.");
+        return;
+      }
+
+      const itemToSave = { ...editingItem };
+      
+      if (activeTab === 'devotionals') {
+        itemToSave.tags = itemToSave.tagsString
+          ? itemToSave.tagsString.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : [];
+        delete itemToSave.tagsString;
+        
+        // Ensure defaults for optional fields
+        itemToSave.prayer = itemToSave.prayer || "";
+        itemToSave.meditation = itemToSave.meditation || "";
+        itemToSave.scripture = itemToSave.scripture || "";
+
+        const current = storage.getDevotionals();
+        const index = current.findIndex(d => d.id === itemToSave.id);
+        if (index > -1) current[index] = itemToSave;
+        else current.unshift(itemToSave);
+        storage.saveDevotionals(current);
+        setDevotionals(current);
+      } else {
+        itemToSave.discussionQuestions = itemToSave.questionsString
+          ? itemToSave.questionsString.split('\n').map((s: string) => s.trim()).filter(Boolean)
+          : [];
+        delete itemToSave.questionsString;
+        
+        itemToSave.topic = itemToSave.topic || "";
+        itemToSave.memoryVerse = itemToSave.memoryVerse || "";
+
+        const current = storage.getSundaySchool();
+        const index = current.findIndex(l => l.id === itemToSave.id);
+        if (index > -1) current[index] = itemToSave;
+        else current.unshift(itemToSave);
+        storage.saveSundaySchool(current);
+        setLessons(current);
+      }
+
+      setEditingItem(null);
+      onEntryAdded();
+    } catch (err) {
+      console.error("Save Error:", err);
+      alert("Failed to save. Check your content formatting and try again.");
     }
-
-    const itemToSave = { ...editingItem };
-    
-    if (activeTab === 'devotionals') {
-      // Clean up tags
-      itemToSave.tags = itemToSave.tagsString
-        ? itemToSave.tagsString.split(',').map((s: string) => s.trim()).filter(Boolean)
-        : [];
-      delete itemToSave.tagsString;
-
-      const current = storage.getDevotionals();
-      const index = current.findIndex(d => d.id === itemToSave.id);
-      if (index > -1) current[index] = itemToSave;
-      else current.unshift(itemToSave);
-      storage.saveDevotionals(current);
-      setDevotionals(current);
-    } else {
-      // Clean up questions
-      itemToSave.discussionQuestions = itemToSave.questionsString
-        ? itemToSave.questionsString.split('\n').map((s: string) => s.trim()).filter(Boolean)
-        : [];
-      delete itemToSave.questionsString;
-
-      const current = storage.getSundaySchool();
-      const index = current.findIndex(l => l.id === itemToSave.id);
-      if (index > -1) current[index] = itemToSave;
-      else current.unshift(itemToSave);
-      storage.saveSundaySchool(current);
-      setLessons(current);
-    }
-
-    setEditingItem(null);
-    onEntryAdded();
-    alert("Saved Locally! To update globally, export and send to developer.");
   };
 
   const handleExportData = () => {
@@ -157,7 +187,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
           </div>
 
           <div className="space-y-10">
-            {/* SECTION 1: CORE DETAILS */}
             <div className="space-y-6">
               <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-700">Primary Content</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -179,7 +208,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
               )}
             </div>
 
-            {/* SECTION 2: SCRIPTURE & VISUALS */}
             <div className="space-y-6 pt-6 border-t border-stone-50">
                <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-700">Scriptural Foundation</h4>
                <div className="space-y-1">
@@ -204,13 +232,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
               </div>
             </div>
 
-            {/* SECTION 3: BODY CONTENT */}
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-stone-400 ml-2">Message Body</label>
               <textarea placeholder="The heart of the message..." value={editingItem.content} onChange={e => setEditingItem({...editingItem, content: e.target.value})} className="w-full h-80 p-6 rounded-[2rem] border-2 border-stone-100 bg-stone-50 serif-font text-lg leading-relaxed focus:border-amber-200 outline-none transition-all" />
             </div>
 
-            {/* SECTION 4: EXTRAS */}
             <div className="space-y-6 pt-6 border-t border-stone-50">
               <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-700">Reflection & Prayer</h4>
               

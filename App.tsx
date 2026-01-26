@@ -180,6 +180,16 @@ const SettingsView = ({ prefs, updatePrefs, isAdmin, setIsAdmin, isStandalone }:
         </div>
       </section>
 
+      <section className="space-y-4 pt-4 border-t border-stone-100">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400">Advanced</h3>
+        <button 
+          onClick={() => { if(confirm("This will restore the app to the Master version. Your local drafts will be lost. Continue?")) { storage.resetToMaster(); alert("App Restored!"); window.location.reload(); } }}
+          className="w-full p-4 border-2 border-stone-100 text-stone-500 font-bold text-[10px] uppercase rounded-2xl hover:bg-stone-50"
+        >
+          Restore Master Content
+        </button>
+      </section>
+
       {isAdmin ? (
         <div className="space-y-3 pt-6">
           <button onClick={() => navigate('/admin')} className="w-full py-5 bg-stone-800 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs">
@@ -259,6 +269,11 @@ const SundaySchoolDetail = ({ lessons, theme, fontSize }: any) => {
     <div className="py-8 animate-in fade-in slide-in-from-bottom-2">
       <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-2 block">{lesson.topic}</span>
       <h2 className="text-3xl md:text-4xl font-bold serif-font mb-6 leading-tight">{lesson.title}</h2>
+      {lesson.imageUrl && (
+        <div className="mb-8 rounded-3xl overflow-hidden shadow-lg aspect-video">
+          <img src={lesson.imageUrl} alt={lesson.title} className="w-full h-full object-cover" />
+        </div>
+      )}
       <div className="p-6 rounded-2xl bg-indigo-50 border-l-4 border-indigo-600 mb-8">
         <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-800 mb-1">Memory Verse</p>
         <p className="serif-font italic text-lg text-indigo-900">"{lesson.memoryVerse}"</p>

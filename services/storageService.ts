@@ -1,6 +1,6 @@
 
 import { DevotionalEntry, SundaySchoolLesson, UserPreferences } from '../types';
-import { INITIAL_DEVOTIONALS, INITIAL_SUNDAY_SCHOOL } from '../constants';
+import { INITIAL_DEVOTIONALS, INITIAL_SUNDAY_SCHOOL, DATA_VERSION } from '../constants';
 
 const STORAGE_KEYS = {
   DEVOTIONALS: 'spirit_meal_devotionals',
@@ -9,7 +9,8 @@ const STORAGE_KEYS = {
   ADMIN_MODE: 'spirit_meal_admin',
   BOOKMARKS: 'spirit_meal_bookmarks',
   NOTES: 'spirit_meal_notes',
-  REFLECTIONS_CACHE: 'spirit_meal_reflections'
+  REFLECTIONS_CACHE: 'spirit_meal_reflections',
+  LAST_VERSION: 'spirit_meal_data_version'
 };
 
 // Custom event for same-window sync
@@ -19,8 +20,30 @@ const notifySync = () => {
   window.dispatchEvent(new CustomEvent(SYNC_EVENT));
 };
 
+// Check if we need to force-update users to the latest Master content
+const hydrateMasterContent = () => {
+  const currentSavedVersion = localStorage.getItem(STORAGE_KEYS.LAST_VERSION);
+  if (currentSavedVersion !== DATA_VERSION) {
+    console.log(`Updating Spirit Meal Content from ${currentSavedVersion} to ${DATA_VERSION}`);
+    // Clear old data to force reload of INITIAL_... constants
+    localStorage.removeItem(STORAGE_KEYS.DEVOTIONALS);
+    localStorage.removeItem(STORAGE_KEYS.SUNDAY_SCHOOL);
+    localStorage.setItem(STORAGE_KEYS.LAST_VERSION, DATA_VERSION);
+    notifySync();
+  }
+};
+
+// Run on service load
+hydrateMasterContent();
+
 export const storage = {
   SYNC_EVENT,
+  resetToMaster: () => {
+    localStorage.removeItem(STORAGE_KEYS.DEVOTIONALS);
+    localStorage.removeItem(STORAGE_KEYS.SUNDAY_SCHOOL);
+    localStorage.setItem(STORAGE_KEYS.LAST_VERSION, DATA_VERSION);
+    notifySync();
+  },
   getDevotionals: (): DevotionalEntry[] => {
     const data = localStorage.getItem(STORAGE_KEYS.DEVOTIONALS);
     return data ? JSON.parse(data) : INITIAL_DEVOTIONALS;

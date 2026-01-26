@@ -4,6 +4,9 @@ import { DevotionalEntry, SundaySchoolLesson } from './types';
 
 export const ADMIN_SECRET_KEY = "SPIRIT-ADMIN-2025";
 
+// Increment this version number whenever you make a global change to the Master content!
+export const DATA_VERSION = "1.0.3"; 
+
 export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
   {
     id: "yfhpvj43x",
@@ -13,7 +16,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     content: "THE LIVING CHRIST GOSPEL MINISTERIES INT'L. SPIRIT MEAL & DAILY DEVOTIONAL - 26 January 2026\n\nTHE HOUSE OF PHILIP\n\nText: Acts 21:8-10; Joshua 24:15; Isaiah 8:18\n\nBrethren, our families are our first gifts unto the Lord. And, as we know, God is very gift-sensitive, as well as sacrifice-selective. We must bring unto him the very best as masterfully inspected and approved by the Holy Spirit. \n\nMay the hand of our God be so more than ever evident and in manifestation in our homes, in Jesus name. And, may no family member become the weak link through which the enemy comes in and wreak havoc in the mighty name of Jesus. Amen. \n\nWhen we give our whole family unto the Lord, it is the best we could give. He is a rewarder and will not despise whole family offering. A family set apart unto the Lord is big confusion to the enemy. Joshua declared,\n\n “And if it seem evil unto you to serve the LORD, choose you this day whom ye will serve; whether the gods which your fathers served that were on the other side of the flood, or the gods of the Amorites, in whose land ye dwell: but as for me and my house, we will serve the LORD.” Joshua 24:15.\n\nNow, Philip had four daughters who prophesied. His home was a stopover house for missionaries to check-in, refresh, and get set for the next mission.\n\n We shall look more into this man’s home from tomorrow and learn a few lessons for today’s Christian homes. When the whole family is engaged in ministering services unto the Lord, what a mighty blessing and glory it yields. \n\nMay we not fail in this regard as we go through this life, in Jesus name.\nThis whole week, we shall carefully examine our families and seek the Lord for grace to plug every loop hole through which the enemy comes in to weaken us and render us out of service. \n\nAnd at some points, try to bring us into stigma, reproach, stopping our dance and bringing us to a halt. God forbid.\n\n“Behold, I and the children whom the LORD hath given me are for signs and for wonders in Israel from the LORD of hosts, which dwelleth in mount Zion.” Isaiah 8:18. \n\nBeloved, may your family receive fresh blessings of great testimonies, this whole week, in Jesus name.\n\nGod’s daily promise for today: “And the blood shall be to you for a token upon the houses where ye are: and when I see the blood, I will pass over you, and the plague shall not be upon you to destroy you, when I smite the land of Egypt.” Exodus 12:13.\n\nDaily Bible Reading: Acts 17",
     prayer: "The battle against family oneness and love is raging higher than has ever been. Pray for families waging internal wars with untold casualties on every side. Pray against infiltration from the enemy.",
     meditation: "Deuteronomy 28:15 - But it shall come to pass, if thou wilt not hearken unto the voice of the LORD thy God...",
-    imageUrl: "https://images.unsplash.com/photo-1543191878-f6a394669865?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "https://picsum.photos/seed/0.613261249329106/800/450",
     tags: ["Family", "Unity", "Service"]
   },
   {
@@ -24,7 +27,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     content: "THE LIVING CHRIST GOSPEL MINISTERIES INT'L. SPIRIT MEAL & DAILY DEVOTIONAL - 19 January 2026\n\nI PRAY YOU, DEPART FROM THE TENTS OF THESE WICKED MEN\n\nText: Numbers 16:23-32\n\nBeloved, welcome to a new week in God’s presence. Your blessings shall be blessing of multiplication in the mighty name of Jesus.  \nWe begin with Scriptures as the Lord honours his word in our lives.\n\n“And he spake unto the congregation, saying, Depart, I pray you, from the tents of these wicked men, and touch nothing of their's, lest ye be consumed in all their sins. So they gat up from the tabernacle of Korah, Dathan, and Abiram, on every side: and Dathan and Abiram came out, and stood in the door of their tents, and their wives, and their sons, and their little children. \n\nAnd Moses said, Hereby ye shall know that the LORD hath sent me to do all these works; for I have not done them of mine own mind. If these men die the common death of all men, or if they be visited after the visitation of all men; then the LORD hath not sent me. \n\nBut if the LORD make a new thing and the earth open her mouth, and swallow them up, with all that appertain unto them, and they go down quick into the pit; then ye shall understand that these men have provoked the LORD. \n\nAnd it came to pass, as he had made an end of speaking all these words, that the ground clave asunder that was under them: And the earth opened her mouth, and swallowed them up, and their houses, and all the men that appertained unto Korah, and all their goods. They, and all that appertained to them, went down alive into the pit, and the earth closed upon them: and they perished from among the congregation.” Numbers 16:23-32.\n\nThe Lord is graciously warning us to steer clear of people who rather not assets to the Kingdom. They are on a lass conveyor belt jerking to destruction. Be warned. ",
     prayer: "Pray for grace to cut off from the Korah generations. “I will not be swept with them. My family will not be caught in their web of unrighteousness.",
     meditation: "God’s daily promise for today: “Let no man deceive you with vain words: for because of these things cometh the wrath of God upon the children of disobedience.” Ephesians 5:6.",
-    imageUrl: "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "https://picsum.photos/seed/0.7887481055896008/800/450",
     tags: ["Warning", "Discernment"]
   },
   {
@@ -35,7 +38,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     content: "THE LIVING CHRIST GOSPEL MINISTERIES INT'L. SPIRIT MEAL & DAILY DEVOTIONAL - 18 January 2026\n\nTHE LOVE FOR HEAVEN 7\n\n[Why you should not miss Heaven]\n\nText: John 14:3\n\nWhile we should not think that heaven is a place of showing off self-accomplishments, let’s remember that there will be many Overcomers like the Apostles, Prophets and Saints who have gone before. \n\nHowever, the reason you should not miss heaven should be centered on the Lord Jesus, otherwise heaven will be far and inaccessible to you for your heart and motive sake.\n\nAcceptable reasons could include the following:\nJesus’s home and throne\nJesus’s close presence (beholding his face always)\nJesus’ table is there - eat with Him\nServing Jesus as his priest directly\nLiving with those who love Jesus\nEverything about Jesus\n\nThoughts for the day: If Jesus Christ was not in Heaven, would you still have been satisfied with living there?",
     prayer: "Pray as led by the Holy Spirit of God.",
     meditation: "Isaiah 62:2 - And the Gentiles shall see thy righteousness, and all kings thy glory.",
-    imageUrl: "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "https://picsum.photos/seed/0.6115128943264102/800/450",
     tags: ["Heaven", "Jesus"]
   },
   {
@@ -46,7 +49,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     content: "THE LIVING CHRIST GOSPEL MINISTERIES INT'L. SPIRIT MEAL & DAILY DEVOTIONAL - 17 January 2026\n\nTHE LOVE FOR HEAVEN 6\n\n[The reason for Heaven 2]   \n\nText: John 14:3\n\nA faithful promise for the faithful and Overcomers (Revelation 3:21, 21:5)\nA reward for those who love Jesus Christ in truth (1 Corinthians 2:9)\nA family home for the bride to be with Jesus Christ forever …that where I am there ye may be also. John 14:3\n\nA Temple where kingdom of Priest dwells\nThe Headquarters of all Authorities, Power and Ruler for all creation.\nLet us read Scriptures\nRevelations 22 1-5\n\n“Then the angel showed me the river of the water of life, as clear as crystal, flowing from the throne of God and of the Lamb down the middle of the great street of the city. On each side of the river stood the tree of life, bearing twelve crops of fruit, yielding its fruit every month. And the leaves of the tree are for the healing of the nations. No longer will there be any curse. The throne of God and of the Lamb will be in the city, and his servants will serve him. \n\n4 They will see his face, and his name will be on their foreheads. 5 There will be no more night. They will not need the light of a lamp or the light of the sun, for the Lord God will give them light. And they will reign for ever and ever.”\n\nHallelujah\n\nThoughts for the day: Did you know destinations are ultimately going to be not just Heaven and hell but also a new earth?",
     prayer: "May I be ready for your return Lord, all I want is you.",
     meditation: "Revelation 2:17 - To him that overcometh will I give to eat of the hidden manna.",
-    imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "https://picsum.photos/seed/0.4944074271288741/800/450",
     tags: ["Hope", "Promises"]
   },
   {
@@ -57,7 +60,7 @@ export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
     content: "In the rush of our modern world, silence is often feared or avoided. Yet, it is in the quiet spaces of our day that we can truly hear the whisper of the Spirit. Today, take five minutes to sit in absolute silence. Don't ask for anything. Don't explain anything. Just be still and acknowledge the presence that is already with you.",
     prayer: "Lord, help me to value the quiet moments today. May my heart find rest in Your presence.",
     meditation: "Peace is not the absence of trouble, but the presence of God.",
-    imageUrl: "https://images.unsplash.com/photo-1499209974431-9dac3adaf477?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "https://picsum.photos/seed/peace/800/450",
     tags: ["Peace", "Silence", "Rest"]
   }
 ];
@@ -74,7 +77,7 @@ export const INITIAL_SUNDAY_SCHOOL: SundaySchoolLesson[] = [
       "What does it mean to sow your bread?",
       "How do we tell bread from seed? [Vision]"
     ],
-    imageUrl: "https://images.unsplash.com/photo-1473970613941-82b1702811c1?q=80&w=1000&auto=format&fit=crop"
+    imageUrl: "https://picsum.photos/seed/seed/800/450"
   },
   {
     id: "ss-1",
@@ -88,7 +91,7 @@ export const INITIAL_SUNDAY_SCHOOL: SundaySchoolLesson[] = [
       "Can you share a time when your faith was tested?",
       "What are practical ways to strengthen faith daily?"
     ],
-    imageUrl: "https://images.unsplash.com/photo-1438109491414-7198515b166b?q=80&w=1000&auto=format&fit=crop"
+    imageUrl: "https://picsum.photos/seed/faith/800/450"
   }
 ];
 

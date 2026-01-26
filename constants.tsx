@@ -1,13 +1,34 @@
-
 import React from 'react';
 import { DevotionalEntry, SundaySchoolLesson } from './types';
 
 export const ADMIN_SECRET_KEY = "SPIRIT-ADMIN-2025";
 
 // Increment this version number whenever you make a global change to the Master content!
-export const DATA_VERSION = "1.0.4"; 
+export const DATA_VERSION = "1.0.5"; 
 
 export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
+  {
+    id: "1769431212951",
+    date: "2026-01-28",
+    title: "THE HOUSE OF PHILIP  3  [ A Holy Mountain]",
+    scripture: "",
+    content: "Some brethren’s homes are literally viewed by Satan as a no-go zone. Such houses have become a mountain, a holy mountain of fire; a house of prayer unto the Lord.\n\nLet us take a look at our houses. Can Jesus live in your house for 1 hour today if Christ was to pay you a visit?\n\nAre there sights and sounds of a far country in your abode? Are your walls “Christian”? \n\nIs there an altar of Baal in your house? Have you decided to retain and not destroy the idols your parents put in your care, and, even after your salvation, you are still nonchalant about destroying them? \n\nYou claim, “I am not serving the idol… I do not bow down to it… People do not come here to do anything on it or around it… I just left it there… it was my late Mom that put it there… Actually, I inherited this house and I have not had time to call a Pastor to come help me destroy it…”\n\nIs your house a mountain for vultures, day or night? Has your home become a lodge for demon or a short-stay check-in bar for the enemy of your soul? \n\nDo not play with fire. Your physical house is just as important to the Lord as your house within, his tabernacle. \n\n“And I heard a great voice out of heaven saying, Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God.” Revelations 21:3.\n\nPhilip made his house like the house of Obededom. It was a house where the continuous flames and embers from the altar of prayer belched up to the heavens of God. \n\nDo not make your house to become a den of thieves. Watch what even your tenants bring into your property. It matters what you allow into your premises because the Lord is with you by day in a pillar of cloud, and by night in a pillar of fire \n\n“And the LORD went before them by day in a pillar of a cloud, to lead them the way; and by night in a pillar of fire, to give them light; to go by day and night:” Exodus 13:21.\n\nPrayer: \n\nThe spirit of “it does not matter”, I kill it from my life today in the mighty name of Jesus. Pray.\n\nGod’s daily promise for today: “And the LORD will create upon every dwelling place of mount Zion, and upon her assemblies, a cloud and smoke by day, and the shining of a flaming fire by night: for upon all the glory shall be a defence.” Isaiah 4:5.\n\nMemory Verse:\n\nBut it shall come to pass, if thou wilt not hearken unto the voice of the LORD thy God, to observe to do all his commandments and his statutes which I command thee this day; that all these curses shall come upon thee, and overtake thee: Deuteronomy 28:15\n\nDaily Bible Reading:\n\nActs 18-19",
+    prayer: "",
+    meditation: "",
+    imageUrl: "",
+    tags: []
+  },
+  {
+    id: "1769431077881",
+    date: "2026-01-27",
+    title: "THE HOUSE OF PHILIP  2  [The House]",
+    scripture: "Psalms 12:6; 2 Peter 1:21; Acts 21:8",
+    content: "Text: Psalms 12:6; 2 Peter 1:21; Acts 21:8\n\nOur day is blessed. We are highly favoured. The presence of the Most High God is our portion today. The word of God is our treasure and peace. May our families become His dwelling place, especially in times like this, in Jesus name. \n\nReading through Scriptures, you would admit that the Holy Spirit did not just use words for fun. Every letter, every word, every event detailed in Scripture carries power and purpose. Every word used was intentional. No flatteries, no eulogies, no hyping; just pure words, the word of God. \n\n“The words of the LORD are pure words: as silver tried in a furnace of earth, purified seven times.” Psalms 12:6.\n\n“For the prophecy came not in old time by the will of man: but holy men of God spake as they were moved by the Holy Ghost.” 2 Peter 1:21.\n\nToday we are focusing on the House of Philip. A man whose integrity and honesty dated back to the days before his ordination as Deacon [Acts 6:1-6); a simple Brother in the congregation of God’s people, loving and serving the Lord as best as he could without necessarily seeking position. \n\nWhy did Scripture have interest in the house of Philip? \n\nWhat was so fascinating in the house of Philip?\n\n What lesson or instructions is the Lord pointing at for us to pick? \n\nThis man did not only have a heart for the work of God, he also raised his family to walk the same walk. The family’s watch word seemed to have been Welcome, all.” Philip’s house was busy, full, accommodating, spiritually functional, a clan of prophets, if you don’t mind. What an example.   \n\n“And the next day we that were of Paul's company departed, and came unto Caesarea: and we entered into the house of Philip the evangelist, which was one of the seven; and abode with him. And the same man had four daughters, virgins, which did prophesy.” Acts 21:8.\n\nOnly God knows how many people made up the company of Paul.  Let us be open to Brethren. Take grudges and sentiment to the backyard and let Brethren receive welcome into your home.\n\nPrayer: \n\nThere is a wall we are ignorantly building against Brethren. Tear it down by fire today in Jesus name. Pray for openness amongst Brethren, pray against coldness due to upbringing and worldliness.\n\nGod’s daily promise for today: “Even them will I bring to my holy mountain, and make them joyful in my house of prayer: their burnt offerings and their sacrifices shall be accepted upon mine altar; for mine house shall be called an house of prayer for all people.” Isaiah 56:7.\n\nMemory Verse:\n\nBut it shall come to pass, if thou wilt not hearken unto the voice of the LORD thy God, to observe to do all his commandments and his statutes which I command thee this day; that all these curses shall come upon thee, and overtake thee: Deuteronomy 28:15\n\nDaily Bible Reading:\n\n1& 2 Thessalonians",
+    prayer: "There is a wall we are ignorantly building against Brethren. Tear it down by fire today in Jesus name. Pray for openness amongst Brethren, pray against coldness due to upbringing and worldliness.\n",
+    meditation: "Even them will I bring to my holy mountain, and make them joyful in my house of prayer: their burnt offerings and their sacrifices shall be accepted upon mine altar; for mine house shall be called an house of prayer for all people.” Isaiah 56:7.",
+    imageUrl: "https://picsum.photos/seed/picsum/200/300",
+    tags: []
+  },
   {
     id: "yfhpvj43x",
     date: "2026-01-26",

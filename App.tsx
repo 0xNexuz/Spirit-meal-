@@ -8,6 +8,15 @@ import Layout from './components/Layout.tsx';
 import DevotionalCard from './components/DevotionalCard.tsx';
 import AdminPanel from './components/AdminPanel.tsx';
 
+// Helper to get local YYYY-MM-DD string
+const getLocalTodayString = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const App: React.FC = () => {
   const [devotionals, setDevotionals] = useState<DevotionalEntry[]>([]);
   const [sundayLessons, setSundayLessons] = useState<SundaySchoolLesson[]>([]);
@@ -60,7 +69,7 @@ const App: React.FC = () => {
 
   const todaysDevotional = useMemo(() => {
     if (devotionals.length === 0) return null;
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalTodayString();
     
     // 1. Try exact match for today
     const exact = devotionals.find(d => d.date === todayStr);
@@ -249,11 +258,16 @@ const AdminRoute = ({ refreshData }: { isAdmin: boolean, refreshData: () => void
 
 const ArchiveView = ({ devotionals, theme }: any) => {
   const sorted = [...devotionals].sort((a, b) => b.date.localeCompare(a.date));
+  const todayStr = getLocalTodayString();
+  
   return (
     <div className="pt-6 space-y-4">
       <h2 className="text-2xl font-bold serif-font mb-4">Library</h2>
       {sorted.length === 0 ? <p className="text-center py-10 opacity-40 italic">Library is empty</p> : sorted.map((d: any) => (
-        <Link key={d.id} to={`/devotional/${d.id}`} className={`block p-4 rounded-2xl border transition-all hover:translate-x-1 ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-stone-100 shadow-sm'}`}>
+        <Link key={d.id} to={`/devotional/${d.id}`} className={`block p-4 rounded-2xl border transition-all hover:translate-x-1 relative overflow-hidden ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-stone-100 shadow-sm'}`}>
+          {d.date === todayStr && (
+            <div className="absolute top-0 right-0 bg-amber-600 text-white text-[8px] font-black uppercase px-3 py-1 rounded-bl-xl tracking-widest">Today's Meal</div>
+          )}
           <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">{d.date}</span>
           <h3 className="font-bold text-lg serif-font">{d.title}</h3>
         </Link>

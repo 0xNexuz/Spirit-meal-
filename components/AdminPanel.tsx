@@ -5,6 +5,15 @@ import { DevotionalEntry, SundaySchoolLesson } from '../types.ts';
 import { storage } from '../services/storageService.ts';
 import { ICONS, INITIAL_DEVOTIONALS } from '../constants.tsx';
 
+// Helper for local YYYY-MM-DD
+const getLocalTodayString = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 interface AdminPanelProps {
   onEntryAdded: () => void;
   editId?: string | null;
@@ -49,7 +58,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onEntryAdded, editId }) => {
 
   const handleCreateNew = () => {
     const id = Date.now().toString();
-    const date = new Date().toISOString().split('T')[0];
+    const date = getLocalTodayString();
     
     if (activeTab === 'devotionals') {
       setEditingItem({

@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { DevotionalEntry, ThemeMode } from '../types';
-import { getDailyReflections } from '../services/geminiService';
-import { storage } from '../services/storageService';
-import { ICONS } from '../constants';
+import { DevotionalEntry, ThemeMode } from '../types.ts';
+import { getDailyReflections } from '../services/geminiService.ts';
+import { storage } from '../services/storageService.ts';
+import { ICONS } from '../constants.tsx';
 
 interface Props {
   entry: DevotionalEntry;
@@ -31,10 +31,11 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
 
     const fetchReflections = async () => {
       setLoadingReflections(true);
-      const res = await getDailyReflections(entry.content);
+      const res = await getDailyReflections(entry.content, entry.id);
       setReflections(res);
       setLoadingReflections(false);
     };
+    
     fetchReflections();
 
     window.addEventListener(storage.SYNC_EVENT, syncState);
@@ -57,7 +58,6 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
     const newNote = e.target.value;
     setUserNote(newNote);
     
-    // Auto-save logic with debounce
     if (noteTimeoutRef.current) window.clearTimeout(noteTimeoutRef.current);
     setIsSavingNote(true);
     
@@ -100,7 +100,6 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
 
   return (
     <div className="py-8 animate-in fade-in duration-700 relative">
-      {/* Hero Image Section */}
       {entry.imageUrl && (
         <div className="mb-8 rounded-3xl overflow-hidden shadow-xl shadow-stone-200/50 border border-stone-100 aspect-video group">
           <img 
@@ -126,7 +125,6 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
             className={`p-3 rounded-full transition-all duration-300 active:scale-90 relative ${
               theme === 'dark' ? 'text-stone-400 hover:text-stone-200 bg-stone-800' : 'text-stone-400 hover:text-stone-600 bg-stone-100'
             }`}
-            title="Share Devotional"
           >
             <ICONS.Share />
             {showCopyFeedback && (
@@ -142,7 +140,6 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
                 ? 'bg-amber-100 text-amber-600 shadow-sm' 
                 : theme === 'dark' ? 'text-stone-400 bg-stone-800' : 'text-stone-400 bg-stone-100'
             }`}
-            title={isBookmarked ? "Remove from Sanctuary" : "Save to Sanctuary"}
           >
             {isBookmarked ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
@@ -176,7 +173,6 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
         </div>
       )}
 
-      {/* User Notes Section - Appears only when bookmarked */}
       {isBookmarked && (
         <section className={`mb-12 p-8 rounded-3xl border-2 border-dashed ${
           theme === 'dark' ? 'border-stone-800 bg-stone-900' : 'border-amber-100 bg-amber-50/30'
@@ -213,8 +209,8 @@ const DevotionalCard: React.FC<Props> = ({ entry, theme, fontSize }) => {
         </div>
         {loadingReflections ? (
           <div className="space-y-4">
-            <div className="h-4 bg-stone-200 animate-pulse rounded-full w-full"></div>
-            <div className="h-4 bg-stone-200 animate-pulse rounded-full w-3/4"></div>
+            <div className="h-4 bg-stone-300/30 animate-pulse rounded-full w-full"></div>
+            <div className="h-4 bg-stone-300/30 animate-pulse rounded-full w-3/4"></div>
           </div>
         ) : (
           <ul className="space-y-6">

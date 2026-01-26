@@ -8,7 +8,8 @@ const STORAGE_KEYS = {
   PREFERENCES: 'spirit_meal_prefs',
   ADMIN_MODE: 'spirit_meal_admin',
   BOOKMARKS: 'spirit_meal_bookmarks',
-  NOTES: 'spirit_meal_notes'
+  NOTES: 'spirit_meal_notes',
+  REFLECTIONS_CACHE: 'spirit_meal_reflections'
 };
 
 // Custom event for same-window sync
@@ -96,5 +97,17 @@ export const storage = {
     }
     localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(notes));
     notifySync();
+  },
+  getReflectionsCache: (id: string): string[] | null => {
+    const data = localStorage.getItem(STORAGE_KEYS.REFLECTIONS_CACHE);
+    if (!data) return null;
+    const cache = JSON.parse(data);
+    return cache[id] || null;
+  },
+  saveReflectionsToCache: (id: string, reflections: string[]) => {
+    const data = localStorage.getItem(STORAGE_KEYS.REFLECTIONS_CACHE);
+    const cache = data ? JSON.parse(data) : {};
+    cache[id] = reflections;
+    localStorage.setItem(STORAGE_KEYS.REFLECTIONS_CACHE, JSON.stringify(cache));
   }
 };

@@ -1,5 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
+import { storage } from "./storageService.ts";
 
 const getAI = () => {
   const apiKey = process.env.API_KEY;
@@ -7,20 +8,67 @@ const getAI = () => {
   return new GoogleGenAI({ apiKey });
 };
 
-export const extractDevotionalStructure = async (text: string) => {
+// Rate limit circuit breaker
+let quotaExhaustedUntil = 0;
+const QUOTA_BACKOFF_MS = 5 * 60 * 1000; // 5 minutes
+
+export const getDailyReflections = async (content: string, id: string): Promise<string[]> => {
+  // 1. Check persistent cache first
+  const cached = storage.getReflectionsCache(id);
+  if (cached) return cached;
+
+  // 2. Check circuit breaker
+  if (Date.now() < quotaExhaustedUntil) {
+    console.warn("Circuit Breaker Active: Using spiritual fallbacks due to API quota.");
+    return getFallbacks();
+  }
+
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [{
         parts: [{
-          text: `Extract this Christian devotional into JSON.
-          Verbatim content in 'content'. 
-          If no prayer/meditation exists, generate brief ones.
-          
-          Text: "${text}"`
+          text: `Generate 3 thought-provoking Christian reflection questions based on this message: "${content.substring(0, 1000)}"`
         }]
       }],
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            questions: { type: Type.ARRAY, items: { type: Type.STRING } }
+          },
+          required: ["questions"]
+        }
+      }
+    });
+    
+    const output = response.text?.trim();
+    const questions = output ? JSON.parse(output).questions : getFallbacks();
+    
+    storage.saveReflectionsToCache(id, questions);
+    return questions;
+  } catch (error: any) {
+    if (error?.status === 429 || error?.message?.includes('429')) {
+      quotaExhaustedUntil = Date.now() + QUOTA_BACKOFF_MS;
+    }
+    return getFallbacks();
+  }
+};
+
+const getFallbacks = () => [
+  "How can you apply this teaching to your relationships today?",
+  "What specific part of this scripture touched your heart the most?",
+  "In what area of your life is God calling you to be 'still' right now?"
+];
+
+export const extractDevotionalStructure = async (text: string) => {
+  try {
+    const ai = getAI();
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: [{ parts: [{ text: `Extract into JSON: ${text}` }] }],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -32,55 +80,12 @@ export const extractDevotionalStructure = async (text: string) => {
             prayer: { type: Type.STRING },
             meditation: { type: Type.STRING },
             tags: { type: Type.ARRAY, items: { type: Type.STRING } }
-          },
-          required: ["title", "scripture", "content", "prayer", "meditation", "tags"]
+          }
         }
       }
     });
-
-    const output = response.text?.trim();
-    return output ? JSON.parse(output) : null;
+    return response.text ? JSON.parse(response.text) : null;
   } catch (error) {
-    console.error("Extraction Error:", error);
     return null;
-  }
-};
-
-export const getDailyReflections = async (devotional: string) => {
-  try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [{
-        parts: [{
-          text: `Generate 3 reflection questions for this devotional: "${devotional}"`
-        }]
-      }],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            questions: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
-            }
-          },
-          required: ["questions"]
-        }
-      }
-    });
-    
-    const output = response.text?.trim();
-    if (!output) throw new Error("Empty response");
-    const parsed = JSON.parse(output);
-    return parsed.questions || [];
-  } catch (error) {
-    console.error("Reflections RPC Error - Using Fallback:", error);
-    return [
-      "How does this message challenge your current walk with God?",
-      "In what practical way can you apply this truth to your life today?",
-      "Is there someone in your life who needs to hear this encouragement today?"
-    ];
   }
 };

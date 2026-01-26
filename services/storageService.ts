@@ -29,6 +29,10 @@ export const storage = {
     localStorage.setItem(STORAGE_KEYS.DEVOTIONALS, JSON.stringify(devotionals));
     notifySync();
   },
+  deleteDevotional: (id: string) => {
+    const items = storage.getDevotionals().filter(i => i.id !== id);
+    storage.saveDevotionals(items);
+  },
   getSundaySchool: (): SundaySchoolLesson[] => {
     const data = localStorage.getItem(STORAGE_KEYS.SUNDAY_SCHOOL);
     return data ? JSON.parse(data) : INITIAL_SUNDAY_SCHOOL;
@@ -36,6 +40,10 @@ export const storage = {
   saveSundaySchool: (lessons: SundaySchoolLesson[]) => {
     localStorage.setItem(STORAGE_KEYS.SUNDAY_SCHOOL, JSON.stringify(lessons));
     notifySync();
+  },
+  deleteSundaySchool: (id: string) => {
+    const items = storage.getSundaySchool().filter(i => i.id !== id);
+    storage.saveSundaySchool(items);
   },
   getPreferences: (): UserPreferences => {
     const data = localStorage.getItem(STORAGE_KEYS.PREFERENCES);

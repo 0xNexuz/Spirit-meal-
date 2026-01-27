@@ -59,7 +59,7 @@ const App: React.FC = () => {
         if (Notification.permission === 'granted') {
           new Notification("Spirit Meal", { 
             body: "Your daily spiritual meal is ready. Take a moment to feed your soul.",
-            icon: '/icon-192.png'
+            icon: '/logo.png'
           });
         }
       }
@@ -71,18 +71,14 @@ const App: React.FC = () => {
     if (devotionals.length === 0) return null;
     const todayStr = getLocalTodayString();
     
-    // 1. Try exact match for today
     const exact = devotionals.find(d => d.date === todayStr);
     if (exact) return exact;
 
-    // 2. Fallback: Most recent devotional that isn't in the future
     const pastAndPresent = devotionals
       .filter(d => d.date <= todayStr)
       .sort((a, b) => b.date.localeCompare(a.date));
     
     if (pastAndPresent.length > 0) return pastAndPresent[0];
-
-    // 3. Last fallback: Just the first one in the list (most recent overall)
     return devotionals[0];
   }, [devotionals]);
 
@@ -115,8 +111,6 @@ const App: React.FC = () => {
     </Router>
   );
 };
-
-// --- SUB-COMPONENTS ---
 
 const LoginView = ({ onLogin }: { onLogin: (s: boolean) => void }) => {
   const [key, setKey] = useState('');
@@ -165,6 +159,35 @@ const LoginView = ({ onLogin }: { onLogin: (s: boolean) => void }) => {
 
 const SettingsView = ({ prefs, updatePrefs, isAdmin, setIsAdmin, isStandalone }: any) => {
   const navigate = useNavigate();
+
+  const handleToggleNotifications = async () => {
+    if (!prefs.notificationsEnabled) {
+      if ('Notification' in window) {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          updatePrefs({ notificationsEnabled: true });
+        } else {
+          alert("Notification permission was denied. Please enable it in your browser settings to receive spiritual reminders.");
+        }
+      } else {
+        alert("Your browser does not support notifications.");
+      }
+    } else {
+      updatePrefs({ notificationsEnabled: false });
+    }
+  };
+
+  const sendTestNotification = () => {
+    if (Notification.permission === 'granted') {
+      new Notification("Spirit Meal Test", {
+        body: "This is a test of your daily devotional reminder. You are all set!",
+        icon: '/logo.png'
+      });
+    } else {
+      alert("Please enable notifications first.");
+    }
+  };
+
   return (
     <div className="pt-6 space-y-8 pb-20">
       <h2 className="text-2xl font-bold serif-font">Settings</h2>
@@ -180,15 +203,31 @@ const SettingsView = ({ prefs, updatePrefs, isAdmin, setIsAdmin, isStandalone }:
               <p className="font-bold">Enable Alerts</p>
               <p className="text-xs text-stone-500">Nudge me for my morning meal</p>
             </div>
-            <button onClick={() => updatePrefs({ notificationsEnabled: !prefs.notificationsEnabled })} className={`w-14 h-7 rounded-full relative transition-all shadow-inner ${prefs.notificationsEnabled ? 'bg-amber-600' : 'bg-stone-200'}`}>
+            <button onClick={handleToggleNotifications} className={`w-14 h-7 rounded-full relative transition-all shadow-inner ${prefs.notificationsEnabled ? 'bg-amber-600' : 'bg-stone-200'}`}>
               <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${prefs.notificationsEnabled ? 'left-8' : 'left-1'}`} />
             </button>
           </div>
 
           {prefs.notificationsEnabled && (
-            <div className="space-y-6">
-              <input type="time" value={prefs.notificationTime} onChange={e => updatePrefs({ notificationTime: e.target.value })} className="w-full p-4 rounded-2xl border bg-stone-50 font-bold text-center text-2xl" />
-              {!isStandalone && <p className="p-4 bg-amber-50 rounded-2xl text-[10px] text-amber-900 italic">Note: For persistent alerts on mobile, use 'Add to Home Screen'.</p>}
+            <div className="space-y-6 animate-in slide-in-from-top-2">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-2">Daily Reminder Time</label>
+                <input type="time" value={prefs.notificationTime} onChange={e => updatePrefs({ notificationTime: e.target.value })} className="w-full p-4 rounded-2xl border bg-stone-50 font-bold text-center text-2xl" />
+              </div>
+              <button 
+                onClick={sendTestNotification}
+                className="w-full py-3 bg-stone-50 text-stone-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-stone-100 hover:bg-stone-100 transition-colors"
+              >
+                Send Test Notification
+              </button>
+              {!isStandalone && (
+                <div className="p-4 bg-amber-50 rounded-2xl space-y-2 border border-amber-100">
+                   <p className="text-[10px] text-amber-900 font-bold uppercase tracking-wider">Reliability Note</p>
+                   <p className="text-[10px] text-amber-800 leading-relaxed italic">
+                     For reminders to work consistently (even when your phone is locked), please use <strong>'Add to Home Screen'</strong> to install Spirit Meal as an app.
+                   </p>
+                </div>
+              )}
             </div>
           )}
         </div>

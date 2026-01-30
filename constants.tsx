@@ -4,9 +4,20 @@ import { DevotionalEntry, SundaySchoolLesson } from './types';
 export const ADMIN_SECRET_KEY = "SPIRIT-ADMIN-2025";
 
 // Increment this version number whenever you make a global change to the Master content!
-export const DATA_VERSION = "1.2.0"; 
+export const DATA_VERSION = "1.3.0"; 
 
 export const INITIAL_DEVOTIONALS: DevotionalEntry[] = [
+  {
+    "id": "1769816201228",
+    "date": "2026-01-31",
+    "title": "THE HOUSE OF PHILIP  7  [Had Four Daughters, Virgins 2]",
+    "scripture": "Acts 21:8-10",
+    "content": "“And the next day we that were of Paul's company departed, and came unto Caesarea: and we entered into the house of Philip the evangelist, which was one of the seven; and abode with him. And the same man had four daughters, virgins, which did prophesy. And as we tarried there many days, there came down from Judaea a certain prophet, named Agabus.” Acts 21:8-10.\n\nYes, as was mentioned in passing yesterday, it is not all about being a virgin. Unbelievers can be virgins. However, the daughters of Philip were virgins with a difference. They were virgins who prophesied. To prophecy is not to be under the influence of alcohol. To prophecy is not to be under some demonic influences and begin to chant. No. \n\nThese young girls were early exposed to the fold of Christ. The atmosphere of prayers did not bore them; they enjoyed every moment and looked forward to when it would be a full house when prophets and different missionaries would come by the house and the place is charged with, probably, speaking in tongues and singing spiritual songs.\n\nThe house of Philip was different. His daughters prophesied. They were assets to the work of the Lord. Their input brought real time direction via prophecy. \n\nWe also see the power of influence in the atmosphere in the house of Philip. Philip’s friends were prophets. In verse 9, we are told that Agabus came by the house few days after the company of Paul landed in the house of Saul.\n\n And, when Prophet Agabus came, he began to prophecy.  \nWatch your visitors. Sooner or later, your children would be attracted to them and may become their victim, especially when Satan is directly involved and gains access through your indifference and nonchalance as a lukewarm Christian, who is neither cold nor hot.\n\n Wake up. Clean up your house today. God is interested. Invite the fire of the Holy Ghost to fall upon every member of your house hold. And become a house the Holy Spirit would be glad to come in and do some holy firework. Amen.\n\nPrayer: \n\nLet us invite the fire of cleansing, the refining fire, to fall upon every corner of our home to make us clean in soul, body and spirit to be fit for the Master’s use.\n\n Pray against negative influences upon our children, both close and distant influences. Let us also pray for whatever doors parents may have opened, ignorantly, for the enemy to come in and sow tars.\n\nGod’s daily promise for today : “For I am the LORD, I change not; therefore ye sons of Jacob are not consumed” Malachi 3:6.\n\nMemory Verse:\n\nBut it shall come to pass, if thou wilt not hearken unto the voice of the LORD thy God, to observe to do all his commandments and his statutes which I command thee this day; that all these curses shall come upon thee, and overtake thee: Deuteronomy 28:15\n\nDaily Bible Reading:\n\n1 Corinthians 12-14",
+    "prayer": "Pray against negative influences upon our children, both close and distant influences. Let us also pray for whatever doors parents may have opened, ignorantly, for the enemy to come in and sow tars",
+    "meditation": "For I am the LORD, I change not; therefore ye sons of Jacob are not consumed” Malachi 3:6.",
+    "imageUrl": "https://images.unsplash.com/photo-1516962080544-eac695c93791?auto=format&fit=crop&q=80&w=1000",
+    "tags": []
+  },
   {
     "id": "1769470517600",
     "date": "2026-01-30",

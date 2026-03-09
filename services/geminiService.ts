@@ -62,30 +62,3 @@ const getFallbacks = () => [
   "What specific part of this scripture touched your heart the most?",
   "In what area of your life is God calling you to be 'still' right now?"
 ];
-
-export const extractDevotionalStructure = async (text: string) => {
-  try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [{ parts: [{ text: `Extract into JSON: ${text}` }] }],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            scripture: { type: Type.STRING },
-            content: { type: Type.STRING },
-            prayer: { type: Type.STRING },
-            meditation: { type: Type.STRING },
-            tags: { type: Type.ARRAY, items: { type: Type.STRING } }
-          }
-        }
-      }
-    });
-    return response.text ? JSON.parse(response.text) : null;
-  } catch (error) {
-    return null;
-  }
-};

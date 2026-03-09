@@ -356,7 +356,8 @@ const SundaySchoolDetail = ({ lessons, theme, fontSize }: any) => {
   const { id } = useParams();
   const lesson = lessons.find((l: any) => l.id === id);
   if (!lesson) return <p className="p-20 text-center opacity-40">Lesson not found</p>;
-  const sizeClass = { sm: 'text-sm', base: 'text-base', lg: 'text-lg', xl: 'text-xl' }[fontSize as any] || 'text-base';
+  const sizeMap: Record<string, string> = { sm: 'text-sm', base: 'text-base', lg: 'text-lg', xl: 'text-xl' };
+  const sizeClass = sizeMap[fontSize] || 'text-base';
   return (
     <div className="py-8 animate-in fade-in slide-in-from-bottom-2">
       <span className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-2 block">{lesson.topic}</span>
@@ -378,7 +379,7 @@ const SundaySchoolDetail = ({ lessons, theme, fontSize }: any) => {
         <section className={`p-8 rounded-3xl ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-stone-100'}`}>
           <h3 className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-6">Study Questions</h3>
           <ul className="space-y-6">
-            {lesson.discussionQuestions.map((q, i) => (
+            {lesson.discussionQuestions.map((q: string, i: number) => (
               <li key={i} className="flex gap-4">
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-200 text-indigo-800 flex items-center justify-center font-bold text-sm">{i + 1}</span>
                 <p className="text-sm leading-relaxed">{q}</p>

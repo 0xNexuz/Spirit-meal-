@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { extractDevotionalStructure } from '../services/geminiService.ts';
 import { DevotionalEntry, SundaySchoolLesson } from '../types.ts';
 import { storage } from '../services/storageService.ts';
 import { ICONS, INITIAL_DEVOTIONALS } from '../constants.tsx';

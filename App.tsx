@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useParams, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { DevotionalEntry, SundaySchoolLesson, UserPreferences, ThemeMode } from './types.ts';
 import { storage } from './services/storageService.ts';
 import { ADMIN_SECRET_KEY, ICONS } from './constants.tsx';
@@ -108,6 +109,7 @@ const App: React.FC = () => {
           <Route path="/settings" element={<SettingsView prefs={prefs} updatePrefs={updatePrefs} isAdmin={isAdmin} setIsAdmin={setIsAdmin} isStandalone={isStandalone} />} />
         </Routes>
       </Layout>
+      <Analytics />
     </Router>
   );
 };
